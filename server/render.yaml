@@ -1,0 +1,21 @@
+# Assigned to: Victor — Day 3 (Deploy backend)
+services:
+  - type: web
+    name: blood-donation-network-api
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn run:app"
+    envVars:
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+databases:
+  - name: blood-donation-db
+    plan: free
