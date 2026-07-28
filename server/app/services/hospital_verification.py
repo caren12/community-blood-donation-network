@@ -1,18 +1,3 @@
-# Assigned to: Victor — Day 2 (Hospital verification — automated check against Kenya's
-#              official facility registry, falling back to manual admin approval)
-#
-# Kenya Master Health Facility Registry (KMHFR) is the Ministry of Health's public
-# registry of every licensed health facility in Kenya. API docs:
-#   https://mfl-api-docs.readthedocs.io/en/latest/
-# Base URL used here: https://api.kmhfr.health.go.ke
-#
-# IMPORTANT: KMHFR's facility list endpoint is publicly readable for basic lookups,
-# but production write/verification workflows may require a registered API account —
-# check the current auth requirements at the docs link above before relying on this
-# in production. This integration degrades gracefully: if the API is unreachable, times
-# out, or returns no confident match, the hospital simply falls back to the manual
-# admin-review flow that was already built (PUT /api/hospitals/<id>/verify).
-
 import requests
 
 KMHFR_BASE_URL = "https://api.kmhfr.health.go.ke/api/facilities/facilities/"

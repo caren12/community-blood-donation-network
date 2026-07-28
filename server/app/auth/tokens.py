@@ -1,4 +1,3 @@
-# Assigned to: Caren — Day 1 (Password reset endpoints)
 import secrets
 from datetime import datetime, timedelta
 

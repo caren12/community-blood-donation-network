@@ -1,6 +1,3 @@
-# Assigned to: Victor — Day 2 (Matching algorithm + match endpoint)
-
-# Simplified ABO/Rh compatibility chart: donor blood type -> recipient types they can give to
 COMPATIBILITY = {
     "O-":  ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],  # universal donor
     "O+":  ["O+", "A+", "B+", "AB+"],
