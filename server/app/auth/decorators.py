@@ -21,5 +21,6 @@ def role_required(*roles):
 
 
 def get_current_user():
+    verify_jwt_in_request()
     user_id = get_jwt_identity()
     return User.query.get(user_id)
