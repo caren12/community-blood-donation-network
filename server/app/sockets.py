@@ -1,13 +1,3 @@
-# Assigned to: Victor — Day 2 (Matching algorithm + match endpoint — WebSocket notification layer)
-#
-# Real-time notification channel. When the matching algorithm creates a RequestMatch,
-# it calls notify_donor_of_match() below instead of just logging a TODO — the donor's
-# browser receives a live "new_match" event with no page refresh required.
-#
-# Client connects with:  io(SOCKET_URL, { auth: { token: <jwt_access_token> } })
-# and is placed into a private room "user_<id>" (works for any role — donor or
-# hospital staff), so notifications only ever reach the account they belong to.
-
 from flask_jwt_extended import decode_token
 from flask_socketio import join_room, disconnect
 from app.extensions import socketio

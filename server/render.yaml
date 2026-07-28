@@ -1,4 +1,3 @@
-# Assigned to: Victor — Day 3 (Deploy backend)
 services:
   - type: web
     name: blood-donation-network-api

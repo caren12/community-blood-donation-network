@@ -1,4 +1,3 @@
-# Assigned to: Ian — Day 1 (Flask app + PostgreSQL + SQLAlchemy setup)
 import os
 from datetime import timedelta
 
