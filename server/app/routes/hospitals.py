@@ -45,3 +45,5 @@ def recheck_auto_verify(hospital_id):
         db.session.commit()
         return jsonify({"verified": True, "hospital": hospital.to_dict()}), 200
     return jsonify({"verified": False, "message": "No confident KMHFR match — use manual verify instead"}), 200
+
+
