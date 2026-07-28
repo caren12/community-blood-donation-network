@@ -1,4 +1,3 @@
-# Assigned to: Victor — Day 3 (Admin donor removal endpoint)
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
 from app.extensions import db

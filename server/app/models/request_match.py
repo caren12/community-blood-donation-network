@@ -1,4 +1,3 @@
-# Assigned to: Caren — Day 1 (Implement all 5 models)
 from datetime import datetime
 from app.extensions import db
 

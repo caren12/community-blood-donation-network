@@ -1,4 +1,3 @@
-# Assigned to: Caren — Day 3 (Donation logging + history endpoints)
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from app.extensions import db
