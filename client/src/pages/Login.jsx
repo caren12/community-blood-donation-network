@@ -7,31 +7,122 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setSubmitting(true)
     try {
       await login(email, password)
       navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   return (
-    <div className="auth-page">
-      <h1>Log in</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        {error && <p className="error">{error}</p>}
-        <button type="submit">Log in</button>
-      </form>
-      <p><Link to="/forgot-password">Forgot password?</Link></p>
-      <p>No account? <Link to="/register">Register</Link></p>
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-[1.1fr_1fr]">
+
+      <div className="hidden md:flex relative flex-col justify-center bg-burgundy-900 text-gold-100 p-16 overflow-hidden">
+        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-burgundy-800" />
+        <div className="absolute top-1/3 -right-16 w-56 h-56 rounded-full bg-burgundy-800/60" />
+
+        <div className="relative">
+          <div className="flex items-center gap-2.5 mb-12">
+            <div className="w-9 h-9 rounded-lg border border-gold-500 flex items-center justify-center">
+              <span className="text-gold-500 text-lg leading-none">♦</span>
+            </div>
+            <span className="text-xs font-medium tracking-widest uppercase text-gold-500">
+              Community Blood Network
+            </span>
+          </div>
+          <p className="font-serif text-5xl leading-tight max-w-lg">
+            Every donation is someone's second chance.
+          </p>
+          <div className="w-16 h-px bg-gold-500 mt-8" />
+        </div>
+
+        <div className="relative max-w-md mt-20">
+          <p className="font-serif italic text-lg leading-relaxed text-gold-300 mb-5">
+            "We filled an O-negative request in 40 minutes flat. This platform changed how our blood bank operates."
+          </p>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full border border-gold-500 flex items-center justify-center text-xs font-medium text-gold-500">
+              AY
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gold-100">Dr. Amina Yusuf</p>
+              <p className="text-xs text-gold-500">Nairobi General Hospital</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-ivory-50 flex items-center justify-center p-8">
+        <div className="max-w-xs w-full">
+          <p className="font-serif text-3xl text-ink-900 mb-1.5">Welcome back</p>
+          <p className="text-sm text-ink-500 mb-9">Log in to your account to continue.</p>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="text-xs font-medium text-ink-500 tracking-wide uppercase block mb-1.5">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="name@hospital.org"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full h-11 rounded-lg border border-ivory-200 bg-white px-3.5 text-sm text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-ink-500 tracking-wide uppercase block mb-1.5">
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full h-11 rounded-lg border border-ivory-200 bg-white px-3.5 text-sm text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500"
+              />
+            </div>
+
+            <div className="text-right">
+              <Link to="/forgot-password" className="text-xs font-medium text-burgundy-600 hover:text-burgundy-900 transition-colors">
+                Forgot password?
+              </Link>
+            </div>
+
+            {error && <p className="text-sm text-burgundy-600">{error}</p>}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full h-11 rounded-lg bg-ink-900 text-gold-500 text-sm font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-burgundy-950 disabled:opacity-60 transition-colors"
+            >
+              {submitting ? 'Logging in…' : 'LOG IN'}
+            </button>
+          </form>
+
+          <p className="text-sm text-ink-500 text-center mt-7">
+            No account?{' '}
+            <Link to="/register" className="text-burgundy-600 font-medium hover:text-burgundy-900 transition-colors">
+              Register
+            </Link>
+          </p>
+        </div>
+      </div>
+
     </div>
   )
 }
