@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-#VICTOR
-# # Assigned to: Caren — Day 1 (Implement all 5 models)
->>>>>>> d954c8a (....)
 from datetime import datetime
 from app.extensions import db
 

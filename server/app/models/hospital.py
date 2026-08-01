@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=======
-#VICTOR
->>>>>>> d954c8a (....)
-from app.extensions import db
+<from app.extensions import db
 
 
 class Hospital(db.Model):
