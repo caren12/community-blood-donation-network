@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+#VICTOR
+>>>>>>> d954c8a (....)
 from app.extensions import db
 
 

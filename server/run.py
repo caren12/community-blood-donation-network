@@ -1,8 +1,12 @@
+<<<<<<< HEAD
 import os
 from dotenv import load_dotenv
 
 # Load environment variables from .env file BEFORE app creation
 load_dotenv()
+=======
+#CAREN
+>>>>>>> d954c8a (....)
 
 import os
 from app import create_app
