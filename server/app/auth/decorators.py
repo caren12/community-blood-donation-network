@@ -1,5 +1,5 @@
-# Assigned to: Ian — Day 1 (Auth endpoints: register, login, JWT)
-from functools import wraps
+#VICTOR
+# from functools import wraps
 from flask import jsonify
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 from app.models.user import User
@@ -21,6 +21,5 @@ def role_required(*roles):
 
 
 def get_current_user():
-    verify_jwt_in_request()
     user_id = get_jwt_identity()
     return User.query.get(user_id)

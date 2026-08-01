@@ -1,4 +1,8 @@
-# Assigned to: Caren — Day 1 (Password reset endpoints)
+<<<<<<< HEAD
+=======
+#VICTOR
+# # Assigned to: Caren — Day 1 (Password reset endpoints)
+>>>>>>> d954c8a (....)
 import secrets
 from datetime import datetime, timedelta
 

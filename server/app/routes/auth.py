@@ -1,5 +1,8 @@
-# Assigned to: Ian — Day 1 (Auth endpoints: register, login, JWT)
-#            & Caren — Day 1 (Password reset endpoints)
+<<<<<<< HEAD
+=======
+#CAREN
+
+>>>>>>> d954c8a (....)
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_mail import Message

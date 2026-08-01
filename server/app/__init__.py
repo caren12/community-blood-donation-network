@@ -1,4 +1,5 @@
-# Assigned to: Ian — Day 1 (Flask app + PostgreSQL + SQLAlchemy setup)
+#CAREN
+
 from flask import Flask
 from app.config import Config
 from app.extensions import db, jwt, bcrypt, cors, mail, socketio
@@ -15,8 +16,8 @@ def create_app(config_class=Config):
     cors.init_app(app, resources={r"/api/*": {"origins": app.config["FRONTEND_URL"]}})
     socketio.init_app(app, cors_allowed_origins=app.config["FRONTEND_URL"])
 
-    # FIXED: Changed from 'import app.sockets' so Python doesn't overwrite the 'app' variable
-    from app import sockets  # noqa: F401
+    # Registers the WebSocket 'connect' handler (see app/sockets.py)
+    import app.sockets  # noqa: F401
 
     # Blueprints — each owned by whoever built that feature (see file headers)
     from app.routes.auth import auth_bp

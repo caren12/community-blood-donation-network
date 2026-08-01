@@ -1,10 +1,9 @@
-# Assigned to: Victor — Day 3 (Deploy backend)
 services:
   - type: web
     name: blood-donation-network-api
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn -k eventlet -w 1 run:app"
+    startCommand: "gunicorn run:app"
     envVars:
       - key: JWT_SECRET_KEY
         sync: false
