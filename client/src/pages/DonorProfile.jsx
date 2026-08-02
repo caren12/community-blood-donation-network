@@ -1,4 +1,4 @@
-#REHEMA
+// Assigned to: Rehema — Day 2 (Donor profile page)
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Droplet, MapPin, CheckCircle2 } from 'lucide-react'

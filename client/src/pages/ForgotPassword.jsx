@@ -1,4 +1,4 @@
-#REHEMA
+// Assigned to: Rehema — Day 1 (Auth context + login/register/forgot/reset-password pages)
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../services/api'

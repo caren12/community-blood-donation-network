@@ -1,17 +1,16 @@
-<<<<<<< HEAD
+# Assigned to: Ian — Day 1 (Flask app + PostgreSQL + SQLAlchemy setup)
+#            & Victor — Day 2 (real-time notification layer — socketio.run instead of app.run)
 import os
+
+if __name__ == "__main__":
+    import eventlet
+    eventlet.monkey_patch()
+
 from dotenv import load_dotenv
-
-# Load environment variables from .env file BEFORE app creation
 load_dotenv()
-=======
-#CAREN
->>>>>>> d954c8a (....)
 
-import os
 from app import create_app
 from app.extensions import db, socketio
-
 app = create_app()
 
 if __name__ == "__main__":

@@ -1,5 +1,4 @@
-#CAREN
-
+# Assigned to: Ian — Day 1 (Flask app + PostgreSQL + SQLAlchemy setup)
 from flask import Flask
 from app.config import Config
 from app.extensions import db, jwt, bcrypt, cors, mail, socketio
@@ -17,7 +16,7 @@ def create_app(config_class=Config):
     socketio.init_app(app, cors_allowed_origins=app.config["FRONTEND_URL"])
 
     # Registers the WebSocket 'connect' handler (see app/sockets.py)
-    import app.sockets  # noqa: F401
+    from app import sockets  # noqa: F401# noqa: F401
 
     # Blueprints — each owned by whoever built that feature (see file headers)
     from app.routes.auth import auth_bp
@@ -40,5 +39,31 @@ def create_app(config_class=Config):
     @app.get("/api/health")
     def health():
         return {"status": "ok"}, 200
+
+    # Admin accounts are never created through the public API — only via this
+    # CLI command, run directly on the server by someone with terminal access.
+    import click
+
+    @app.cli.command("create-admin")
+    @click.option("--name", prompt=True)
+    @click.option("--email", prompt=True)
+    @click.option("--password", prompt=True, hide_input=True, confirmation_prompt=True)
+    def create_admin(name, email, password):
+        """Create an admin account. Run with: flask create-admin"""
+        from app.models.user import User
+
+        if User.query.filter_by(email=email).first():
+            click.echo(f"A user with email {email} already exists.")
+            return
+
+        admin = User(
+            name=name,
+            email=email,
+            password_hash=bcrypt.generate_password_hash(password).decode("utf-8"),
+            role="admin",
+        )
+        db.session.add(admin)
+        db.session.commit()
+        click.echo(f"Admin account created: {email}")
 
     return app
