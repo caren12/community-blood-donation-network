@@ -1,4 +1,4 @@
-#IAN
+// Assigned to: Rehema — Day 1 (Auth context + login/register/forgot/reset-password pages)
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'

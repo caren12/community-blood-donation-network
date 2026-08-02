@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
-#CAREN
->>>>>>> d954c8a (....)
+# Assigned to: Caren — Day 2 (Donor endpoints)
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from app.extensions import db
@@ -41,10 +38,17 @@ def update_my_profile():
 @donors_bp.get("")
 @jwt_required()
 def search_donors():
+    user = get_current_user()
     blood_type = request.args.get("blood_type")
     city = request.args.get("city")
 
-    query = User.query.filter_by(role="donor", is_available=True)
+    query = User.query.filter_by(role="donor")
+
+    # Admins can see every donor account, including unavailable ones.
+    # Everyone else (hospital staff searching for donors) only sees available donors.
+    if not user or user.role != "admin":
+        query = query.filter_by(is_available=True)
+
     if blood_type:
         query = query.filter_by(blood_type=blood_type)
     if city:

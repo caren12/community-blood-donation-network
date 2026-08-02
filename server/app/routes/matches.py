@@ -1,7 +1,5 @@
-<<<<<<< HEAD
-=======
-#CAREN
->>>>>>> d954c8a (....)
+# Assigned to: Caren — Day 2 (Match respond endpoint)
+#            & Victor — Day 2 (real-time notification layer)
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from app.extensions import db
@@ -12,6 +10,27 @@ from app.sockets import notify_hospital_of_response
 from app.auth.decorators import get_current_user, role_required
 
 matches_bp = Blueprint("matches", __name__)
+
+
+@matches_bp.get("/mine")
+@jwt_required()
+@role_required("donor")
+def my_matches():
+    user = get_current_user()
+    matches = RequestMatch.query.filter_by(donor_id=user.id).order_by(RequestMatch.notified_at.desc()).all()
+
+    result = []
+    for match in matches:
+        blood_request = BloodRequest.query.get(match.blood_request_id)
+        hospital = Hospital.query.get(blood_request.hospital_id) if blood_request else None
+        result.append({
+            **match.to_dict(),
+            "blood_type": blood_request.blood_type if blood_request else None,
+            "urgency_level": blood_request.urgency_level if blood_request else None,
+            "hospital_name": hospital.name if hospital else None,
+        })
+
+    return jsonify(result), 200
 
 
 @matches_bp.put("/<int:match_id>/respond")

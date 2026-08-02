@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
-#VICTOR
->>>>>>> d954c8a (....)
+# Assigned to: Caren — Day 1 (Implement all 5 models)
 from datetime import datetime
 from app.extensions import db
 
@@ -22,7 +19,10 @@ class RequestMatch(db.Model):
             "id": self.id,
             "blood_request_id": self.blood_request_id,
             "donor_id": self.donor_id,
-            "distance_km": self.distance_km,
-            "response_status": self.response_status,
-            "notified_at": self.notified_at.isoformat() if self.notified_at else None,
-        }
+        "donor_name": self.donor.name if self.donor else None,
+        "donor_city": self.donor.city if self.donor else None,
+        "distance_km": self.distance_km,
+        "response_status": self.response_status,
+        "notified_at": self.notified_at.isoformat() if self.notified_at else None,
+    }
+   
