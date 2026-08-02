@@ -12,6 +12,19 @@ from app.auth.decorators import get_current_user, role_required
 
 requests_bp = Blueprint("requests", __name__)
 
+ALLOWED_BLOOD_TYPES = {"O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"}
+ALLOWED_URGENCY_LEVELS = {"low", "medium", "critical"}
+ALLOWED_STATUSES = {"open", "fulfilled", "expired"}
+
+
+def _user_owns_request(blood_request, user):
+    """Admins can act on any request. Hospital staff can only act on
+    requests belonging to their own hospital."""
+    if user.role == "admin":
+        return True
+    hospital = Hospital.query.filter_by(owner_id=user.id).first()
+    return hospital is not None and hospital.id == blood_request.hospital_id
+
 
 @requests_bp.post("")
 @jwt_required()
@@ -25,15 +38,33 @@ def create_request():
         return jsonify({"error": "Hospital is not yet verified by an admin"}), 403
 
     data = request.get_json() or {}
-    required = ["blood_type", "units_needed"]
-    if not all(data.get(f) for f in required):
-        return jsonify({"error": f"Missing required fields: {required}"}), 400
+    errors = {}
+
+    blood_type = data.get("blood_type")
+    if blood_type not in ALLOWED_BLOOD_TYPES:
+        errors["blood_type"] = f"Must be one of {sorted(ALLOWED_BLOOD_TYPES)}"
+
+    units_raw = data.get("units_needed")
+    units_needed = None
+    try:
+        units_needed = int(units_raw)
+        if units_needed <= 0:
+            errors["units_needed"] = "Must be a positive integer"
+    except (TypeError, ValueError):
+        errors["units_needed"] = "Must be a positive integer"
+
+    urgency_level = data.get("urgency_level", "medium")
+    if urgency_level not in ALLOWED_URGENCY_LEVELS:
+        errors["urgency_level"] = f"Must be one of {sorted(ALLOWED_URGENCY_LEVELS)}"
+
+    if errors:
+        return jsonify({"error": "Validation failed", "fields": errors}), 400
 
     blood_request = BloodRequest(
         hospital_id=hospital.id,
-        blood_type=data["blood_type"],
-        units_needed=data["units_needed"],
-        urgency_level=data.get("urgency_level", "medium"),
+        blood_type=blood_type,
+        units_needed=units_needed,
+        urgency_level=urgency_level,
         status="open",
     )
     db.session.add(blood_request)
@@ -71,13 +102,39 @@ def get_request(request_id):
 @role_required("hospital_staff", "admin")
 def update_request(request_id):
     blood_request = BloodRequest.query.get_or_404(request_id)
+    user = get_current_user()
+
+    if not _user_owns_request(blood_request, user):
+        return jsonify({"error": "You do not have access to this request"}), 403
+
     data = request.get_json() or {}
+    errors = {}
+
     if "status" in data:
-        blood_request.status = data["status"]
+        if data["status"] not in ALLOWED_STATUSES:
+            errors["status"] = f"Must be one of {sorted(ALLOWED_STATUSES)}"
+        else:
+            blood_request.status = data["status"]
+
     if "units_needed" in data:
-        blood_request.units_needed = data["units_needed"]
+        try:
+            units_needed = int(data["units_needed"])
+            if units_needed <= 0:
+                errors["units_needed"] = "Must be a positive integer"
+            else:
+                blood_request.units_needed = units_needed
+        except (TypeError, ValueError):
+            errors["units_needed"] = "Must be a positive integer"
+
     if "urgency_level" in data:
-        blood_request.urgency_level = data["urgency_level"]
+        if data["urgency_level"] not in ALLOWED_URGENCY_LEVELS:
+            errors["urgency_level"] = f"Must be one of {sorted(ALLOWED_URGENCY_LEVELS)}"
+        else:
+            blood_request.urgency_level = data["urgency_level"]
+
+    if errors:
+        return jsonify({"error": "Validation failed", "fields": errors}), 400
+
     db.session.commit()
     return jsonify(blood_request.to_dict()), 200
 
@@ -87,6 +144,11 @@ def update_request(request_id):
 @role_required("hospital_staff", "admin")
 def cancel_request(request_id):
     blood_request = BloodRequest.query.get_or_404(request_id)
+    user = get_current_user()
+
+    if not _user_owns_request(blood_request, user):
+        return jsonify({"error": "You do not have access to this request"}), 403
+
     db.session.delete(blood_request)
     db.session.commit()
     return jsonify({"message": "Request cancelled"}), 200
@@ -98,6 +160,11 @@ def cancel_request(request_id):
 @role_required("hospital_staff", "admin")
 def run_matching(request_id):
     blood_request = BloodRequest.query.get_or_404(request_id)
+    user = get_current_user()
+
+    if not _user_owns_request(blood_request, user):
+        return jsonify({"error": "You do not have access to this request"}), 403
+
     hospital = Hospital.query.get(blood_request.hospital_id)
 
     compatible_donors = find_compatible_donors(blood_request.blood_type, hospital.city, User)
@@ -121,7 +188,6 @@ def run_matching(request_id):
 
     db.session.commit()
 
-    # Real-time push — donor sees the new match instantly, no refresh needed.
     for match in created_matches:
         notify_donor_of_match(match.donor_id, {
             **match.to_dict(),
@@ -130,9 +196,6 @@ def run_matching(request_id):
             "hospital_name": hospital.name,
         })
 
-    # Return every current match for this request, not just the ones created
-    # in this run — otherwise a hospital re-running matching after a donor
-    # already matched sees "0 matched" even though the match still exists.
     all_matches = RequestMatch.query.filter_by(blood_request_id=blood_request.id).all()
 
     return jsonify({

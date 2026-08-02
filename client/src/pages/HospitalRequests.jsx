@@ -30,7 +30,7 @@ export default function HospitalRequests() {
 
   const filtered = requests.filter((r) => {
     const matchesStatus = statusFilter === 'all' || r.status === statusFilter
-    const matchesSearch = r.blood_type.toLowerCase().includes(search.toLowerCase())
+    const matchesSearch = (r.blood_type || '').toLowerCase().includes(search.toLowerCase())
     return matchesStatus && matchesSearch
   })
 
