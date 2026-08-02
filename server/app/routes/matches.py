@@ -1,5 +1,7 @@
-# Assigned to: Caren — Day 2 (Match respond endpoint)
-#            & Victor — Day 2 (real-time notification layer)
+<<<<<<< HEAD
+=======
+#CAREN
+>>>>>>> d954c8a (....)
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from app.extensions import db
